@@ -101,7 +101,7 @@ describe('User', () => {
         expect(newUser.createdAt).toEqual(undefined);
         expect(newUser.updatedAt).toEqual(undefined);
     });
-    it.only('can be shown for a logged in user only', async () => {
+    it('can be shown for a logged in user only', async () => {
         const user = await User.create({
             firstName: 'Elowyn',
             lastName: 'Platzer Bartel',
@@ -140,5 +140,22 @@ describe('User', () => {
             .set('jwt', token)
             .expect(404);
 
+    });
+    it.only('user tries to login with duplicate email', async()=>{
+        const duplicateEmailRes = await request(app)
+        .post('/users')
+        .send({
+          firstName: 'Elowyn',
+          lastName: 'Platzer Bartel',
+          email: 'elowyn@example.com',
+          birthYear: 2015,
+          student: true,
+          password: 'password',
+        })
+        .expect(200);
+      console.log("**************", duplicateEmailRes.body.user);
+      //  expect(duplicateEmailRes.body.jwt).toBe(undefined);
+        expect(duplicateEmailRes.body.user.id).toBe(undefined);
+        expect(duplicateEmailRes.body.user.errors).toEqual(['Email already taken']);
     });
 });
