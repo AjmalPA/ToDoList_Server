@@ -141,7 +141,7 @@ describe('User', () => {
             .expect(404);
 
     });
-    it.only('user tries to login with duplicate email', async()=>{
+    it('user tries to login with duplicate email', async()=>{
         const duplicateEmailRes = await request(app)
         .post('/users')
         .send({

@@ -38,13 +38,12 @@ module.exports = {
         const errors = [];
 
         if (await module.exports.findBy({ email: properties.email })) {
-
             const error = 'Email already taken';
             errors.push(error);
         };
         if (errors.length > 0) {
-           const user={};
-           user.errors=errors;
+            const user = {};
+            user.errors = errors;
             return user;
         };
 
@@ -113,7 +112,30 @@ module.exports = {
     find: async id => {
         const users = (await query('SELECT * FROM "users" WHERE "id" = $1', [id])).rows[0];
         return users;
-    }
+    },
+    update: async properties => {
+        const saltRounds = 10;
+        const salt = bcrypt.genSaltSync(saltRounds);
+        const passwordDigest = bcrypt.hashSync(properties.password, salt);
+      
+        const updatedUser = (await query(`UPDATE "users" SET
+          "firstName"=($1),
+          "lastName"=($2),
+          "email"=($3),
+          "birthYear"=($4),
+          "student"=($5),
+          "passwordDigest"=($6) WHERE id=($7) RETURNING *`, [
+          properties.firstName,
+          properties.lastName,
+          properties.email,
+          properties.birthYear,
+          properties.student,
+          passwordDigest,
+          properties.id,
+        ])).rows[0];
+      
+        return updatedUser;
+      }
 }
 
 

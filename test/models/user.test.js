@@ -74,4 +74,30 @@ describe('User', () => {
         expect(foundUser.birthYear).toEqual(2015);
         expect(foundUser.student).toEqual(true);
       });
+      it.only('User can be updated', async () => {
+        const originalUser = await User.create({
+          firstName: 'Elowyn',
+          lastName: 'Platzer Bartel',
+          email: 'elowyn@example.com',
+          birthYear: 2015,
+          student: true,
+          password: 'password',
+        });
+        const updatedUser = await User.update({
+          id: originalUser.id,
+          firstName: 'Freyja',
+          lastName: 'Puppy',
+          email: 'freyja@example.com',
+          birthYear: 2016,
+          student: false,
+          password: 'puppy password',
+        })
+     
+        expect(updatedUser.firstName).toBe('Freyja');
+        expect(updatedUser.lastName).toBe('Puppy');
+        expect(updatedUser.email).toBe('freyja@example.com');
+        expect(updatedUser.birthYear).toBe(2016);
+        expect(updatedUser.student).toBe(false);
+        expect(updatedUser.passwordDigest).not.toBe(originalUser.passwordDigest);
+      });
 });
